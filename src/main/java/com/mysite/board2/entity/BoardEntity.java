@@ -35,9 +35,10 @@ public class BoardEntity extends BaseEntity {
 	@Column
 	private int boardHits;
 	
-	
+	//뷰페이지에서 데이터를 인풋받아 데이터베이스에 저장
 	public static BoardEntity toSaveEntity (BoardDTO boardDTO) {
 		BoardEntity boardEntity = new BoardEntity ();
+		
 		boardEntity.setBoardWriter(boardDTO.getBoardWriter());
 		boardEntity.setBoardPass(boardDTO.getBoardPass());
 		boardEntity.setBoardTitle(boardDTO.getBoardTitle());
