@@ -1,0 +1,63 @@
+1. config 패키지 : Spring Security에 필요한 설정 파일이 존재한다.
+
+
+2. controller 패키지 : Controller Class들이 모여 있으며, View로부터 오는 HTTP 요청 
+(API 요청)을 처리하는 역할을 한다.
+
+
+3. domain 패키지 : DB의 테이블과 매칭될 Class 파일들이 모여 있다. (Entity 클래스라고도 함)
+
+
+4. dto 패키지 : dto(data transfer object)란 각 계층간 데이터 교환을 위한 객체이다.
+DB로부터 데이터를 얻어 Service, Controller 등으로 보낼 때 사용한다.
+별도의 Logic을 갖지 않고 순수 getter, setter 메서드만 가진다.
+
+
+5. repository 패키지 : Entity에 의해 생성된 DB에 접근하는 메서드(ex) findAll()) 들을 사용하기 
+위한 Interface 파일들이 모여있는 패키지이다. 보통 JpaRepository를 상속 받음으로써 
+기본적인 CURD 동작이 모두 가능해진다.
+=> JpaRepository<대상으로 지정할 엔티티, 해당 엔티티의 PK의 타입>
+
+
+6. service 패키지 : DB와 상호작용하는 비즈니스 로직을 수행하는 Class 파일들이 모여져 있다.
+
+*SpringBoot는 Java란 Programming Language로 API를 제공해준다.
+사용자는 이런 API를 HTML 등의 Front View와 상호작용하며 데이터를 주고 받게 된다.
+사용자는 Web Front를 통해 SpringBoot의 API를 사용하게 되며,
+모든 사용자의 요청은 Controller를 통해 분기 처리를 하게 된다. (DispatcherServlet이 앞 단에 있긴 하지만 생략)
+Controller는 View로부터 받은 사용자의 요청을 Service에게 요청하며, Serivce는 내부 비즈니스 로직을 담당하게 된다.
+Service는 DB(Entity)와 상호작용을 해서 데이터를 Create, Read, Update, Delete 등을 수행하게 된다.
+또한 Front <-> Controller <-> Service 간 데이터를 주고 받을 때는 DTO(Data Transfer Object)라는 
+객체를 통해 데이터를 주고 받게 된다. (선택 사항이지만 권장하는 부분)
+
+---------
+
+@Entity
+Jpa (Java Persisitence API) 가 Entity 어노테이션 설정을 해준 클래스 필드 변수값들을 테이블로 
+자동 생성해서 데이터베이스를 만들어준다.
+
+@Id / @GeneratedValue
+SQL 에서 프라이머리 키 설정이라고 생각하면 된다. 로우가 추가될때마다 자동으로 숫자가 올라간다. 
+(보통 id값 들은 데이터타입을 long 을 쓴다고 한다)
+
+@Setter / @Column
+Setter : 그냥 세터와 똑같다. 세터를 자동 생성 해준다.
+Column : 컬럼 설정값이다. nullable = false 라면 기본으로 값이 들어갈때 null값이 들어가지 않는다. 
+이런식으로 디폴트값이나 길이를 설정 할 수 있다.
+
+@OneToMany
+양방향 맵핑이다. 게시글이 게시되고, 댓글이 달리려면 해당 게시글에 댓글이 달려야 되는 것처럼, 
+기본 주체는 게시글 (mappedBy)(테이블이름 기입) 로 설정하고, 종속(cascade)관계는 ALL 로 상위 테이블에서 
+하위 테이블로 모든 작업을 전파한다. (해당 게시글에 달릴 댓글 리스트는 해시셋으로 관리한다.)
+
+@EntityListenrs
+엔티티 리스너는 엔티티의 변화를 감지하고 테이블의 데이터를 자기가 알아서 조작해주는 역할을 한다.
+created_At 이나 modified_At 컬럼 같은 경우에는 글이 작성되고 수정될때 해당 시간값이 알아서 자동으로
+ 입력되게 해야한다. 그걸 수행해준다고 한다.
+
+@DateTimeFormat / @CreatedDate/By
+@DateTimeFormat : 날짜 시간 형식으로 값을 입력한다. (세부 설정으로 어떻게 값을 저장할지 설정이 가능함.)
+@CreatedDate/By : 생성 시간과 생성자를 입력해준다. (LastmModified 는 수정시간/수정자)
+@MappedSuperclass
+해당 필드를 가진 클래스는 게시글과 댓글 클래스 양쪽에서 사용이 되어야한다. 부모 클래스처럼 말이다. 
+그럴때 쓰인다고 한다 (?)
